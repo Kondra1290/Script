@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Файл для шифрования
+FILE="/root/test-crypt"
+
+# Проверка, существования файла
+if [ ! -f "$FILE" ]; then
+    echo "Файл $FILE не существует. Создаем файл размером 1 ГБ..."
+    dd if=/dev/zero of="$FILE" bs=1M count=1000
+fi
+
+# Затраченное время
+START_TIME=$(date +%s)
+
+/sbin/cryptsetup -y luksFormat "$FILE"
+
+# Обработка результата
+if [ $? -eq 0 ]; then
+    END_TIME=$(date +%s)
+    ELAPSED_TIME=$((END_TIME - START_TIME))
+    echo "Шифрование завершено. Затраченное время: $ELAPSED_TIME секунд."
+else
+    echo "Произошла ошибка при выполнении cryptsetup."
+fi
